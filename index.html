@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>The Roll Chronicle</title>
+    <!-- Link to our stylesheet -->
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+
+    <!-- Main App Container -->
+    <div id="app-container">
+
+        <!-- Header Section -->
+        <header>
+            <h1>Unwinder</h1>
+        </header>
+
+        <!-- QR Code Reader Section -->
+        <main>
+            <div id="qr-reader"></div>
+        </main>
+
+        <!-- Controls and Actions Section (Initially Hidden) -->
+        <div id="action-panel" class="hidden">
+            <h2>Scanned Roll: <span id="scanned-roll-id"></span></h2>
+            <p>What do you want to do with this roll?</p>
+            
+            <!-- Dropdown for machine selection, only shown when 'Use' is selected -->
+            <div id="machine-selection" class="hidden">
+                <label for="machine-id">Select Machine:</label>
+                <select id="machine-id">
+                    <option value="">--Please choose a machine--</option>
+                    <option value="Machine A">Machine A</option>
+                    <option value="Machine B">Machine B</option>
+                    <option value="Wrapper 1">Wrapper 1</option>
+                    <!-- Add more of your machines here -->
+                </select>
+            </div>
+            
+            <!-- Main Action Buttons -->
+            <div class="button-group">
+                <button id="stock-button">Add to Warehouse</button>
+                <button id="use-button">Use on Machine</button>
+            </div>
+            
+            <!-- Button to start a new scan -->
+            <button id="rescan-button">Scan Another Roll</button>
+        </div>
+
+        <!-- Status Messages to the user -->
+        <div id="status-message">
+            <p>Point camera at a QR code to begin.</p>
+        </div>
+
+    </div>
+
+    <!-- Link to external QR code library -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- Link to our app's logic -->
+    <script src="script.js"></script>
+</body>
+</html>

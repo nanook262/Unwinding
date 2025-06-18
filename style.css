@@ -1,0 +1,148 @@
+/* General Body and App Layout */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+}
+
+#app-container {
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+header {
+    background-color: #4A90E2; /* A nice blue header */
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+main {
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* QR Code Scanner Styling */
+#qr-reader {
+    width: 90%;
+    max-width: 500px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+/* Action Panel for after scanning */
+#action-panel {
+    padding: 20px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+#action-panel h2 {
+    margin-top: 0;
+    font-size: 1.1em;
+}
+
+#scanned-roll-id {
+    font-weight: bold;
+    color: #4A90E2;
+}
+
+/* Machine Selection Dropdown */
+#machine-selection {
+    margin: 20px 0;
+}
+
+#machine-selection label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+#machine-id {
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Button Styling */
+.button-group {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+button {
+    flex-grow: 1;
+    padding: 15px 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#stock-button {
+    background-color: #50E3C2; /* A teal color */
+    color: white;
+}
+#stock-button:hover {
+    background-color: #43c0a5;
+}
+
+#use-button {
+    background-color: #F5A623; /* An orange color */
+    color: white;
+}
+#use-button:hover {
+    background-color: #d48f1e;
+}
+
+#rescan-button {
+    width: 100%;
+    background-color: #777;
+    color: white;
+}
+#rescan-button:hover {
+    background-color: #666;
+}
+
+/* Status Message Area */
+#status-message {
+    padding: 15px;
+    text-align: center;
+    background-color: #eaf2ff;
+    border-top: 1px solid #d1e0ff;
+    font-weight: bold;
+}
+
+/* Helper class to hide elements */
+.hidden {
+    display: none !important;
+}
