@@ -82,7 +82,8 @@ function handleScanSuccess(decodedText) {
 }
 
 /**
- * Sends data to the backend Google Apps Script using 'cors' mode to get detailed errors.
+ * Sends data to the backend Google Apps Script.
+ * FINAL VERSION designed for maximum compatibility.
  */
 function sendDataToAction(payload) {
     appState.isSubmitting = true;
@@ -91,24 +92,15 @@ function sendDataToAction(payload) {
     debugPayload.textContent = `Sending Payload: ${JSON.stringify(payload, null, 2)}`;
     debugError.textContent = "";
 
-    // --- MODIFICATION HERE: Using 'cors' mode ---
+    // This creates a form-like data structure, which is highly compatible.
+    const formData = new FormData();
+    formData.append("payload", JSON.stringify(payload));
+
     fetch(SCRIPT_URL, {
         method: 'POST',
-        mode: 'cors', // Switched back to cors to see the real error
-        cache: 'no-cache',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        redirect: 'follow',
-        body: JSON.stringify(payload)
+        body: formData
     })
-    .then(response => {
-        if (!response.ok) {
-            // This will catch server-side errors that are not network errors
-            throw new Error(`Server responded with status: ${response.status}`);
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
             statusMessageElement.innerHTML = `✅ Success: ${data.message}`;
@@ -117,13 +109,11 @@ function sendDataToAction(payload) {
         }
     })
     .catch(error => {
-        // This is the most important part. It will display the browser's security error.
         console.error('Error:', error);
-        statusMessageElement.textContent = '❌ A connection error occurred.';
+        statusMessageElement.textContent = '❌ A critical connection error occurred.';
         debugError.textContent = `Fetch Error: ${error.toString()}`;
     })
     .finally(() => {
-        // Disable buttons after an attempt
         stockButton.style.display = 'none';
         useButton.style.display = 'none';
         machineSelection.classList.add('hidden');
