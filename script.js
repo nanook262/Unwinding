@@ -1,5 +1,5 @@
 // --- Configuration ---
-// IMPORTANT: This should be your correct, deployed Web App URL.
+// This MUST be your correct, deployed Web App URL.
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKE2ukx_7WLezPayj6wtQ-i5IIBy0jn0jynHaXHgOxv_5-xHpnfdIiYBm-qL67N1ZJLA/exec"; 
 
 // --- DOM Elements ---
@@ -43,44 +43,35 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-
-        // --- NEW, MORE ROBUST CAMERA START LOGIC ---
+        
         statusMessageElement.textContent = 'Requesting camera access...';
         Html5Qrcode.getCameras().then(cameras => {
             if (cameras && cameras.length) {
-                // Always try to use the back camera first ('environment')
                 const cameraId = cameras.find(camera => camera.label.toLowerCase().includes('back'))?.id || cameras[0].id;
                 statusMessageElement.textContent = 'Starting camera...';
-                
-                html5QrCode.start(
-                    cameraId, 
-                    config, 
-                    qrCodeSuccessCallback
-                ).catch(err => {
-                    console.error("Error starting camera:", err);
-                    statusMessageElement.textContent = `❌ Error starting camera. Please refresh.`;
-                    debugError.textContent = `Camera Error: ${err}`;
-                });
+                html5QrCode.start(cameraId, config, qrCodeSuccessCallback)
+                    .catch(err => {
+                        statusMessageElement.textContent = `❌ Error starting camera. Check permissions.`;
+                        debugError.textContent = `Camera Error: ${err}`;
+                    });
             } else {
                 statusMessageElement.textContent = '❌ No cameras found on this device.';
             }
         }).catch(err => {
-            console.error("Error getting camera list:", err);
-            statusMessageElement.textContent = '❌ Could not get camera list. Please grant permission.';
+            statusMessageElement.textContent = '❌ Could not get camera list. Grant permission and refresh.';
             debugError.textContent = `Permission Error: ${err}`;
         });
     };
     
     startScanner();
 
-    // --- Event Listeners for Buttons (No Changes Here) ---
+    // --- Event Listeners ---
     stockButton.addEventListener('click', () => { if (appState.isSubmitting) return; sendDataToAction({ action: 'stock' }); });
     useButton.addEventListener('click', () => { if (appState.isSubmitting) return; machineSelection.classList.remove('hidden'); useButton.style.display = 'none'; stockButton.style.display = 'none'; statusMessageElement.textContent = 'Please select a machine to confirm.'; });
     machineIdDropdown.addEventListener('change', () => { const selectedMachine = machineIdDropdown.value; if (selectedMachine) { if (appState.isSubmitting) return; sendDataToAction({ action: 'use', machineId: selectedMachine }); } });
     rescanButton.addEventListener('click', () => { startScanner(); });
 });
 
-// --- Helper Functions (No Changes Here) ---
 
 function handleScanSuccess(decodedText) {
     let rollId = decodedText;
@@ -90,6 +81,9 @@ function handleScanSuccess(decodedText) {
     appState.isScanning = false; appState.scannedData = rollId; updateUI();
 }
 
+/**
+ * Sends data to the backend Google Apps Script using 'cors' mode to get detailed errors.
+ */
 function sendDataToAction(payload) {
     appState.isSubmitting = true;
     statusMessageElement.textContent = 'Sending data to server...';
@@ -97,21 +91,42 @@ function sendDataToAction(payload) {
     debugPayload.textContent = `Sending Payload: ${JSON.stringify(payload, null, 2)}`;
     debugError.textContent = "";
 
+    // --- MODIFICATION HERE: Using 'cors' mode ---
     fetch(SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors',
+        mode: 'cors', // Switched back to cors to see the real error
+        cache: 'no-cache',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        redirect: 'follow',
         body: JSON.stringify(payload)
     })
     .then(response => {
-        statusMessageElement.innerHTML = `✅ Success! Data sent to server.`;
-        debugPayload.textContent = "";
-        stockButton.style.display = 'none'; useButton.style.display = 'none'; machineSelection.classList.add('hidden');
+        if (!response.ok) {
+            // This will catch server-side errors that are not network errors
+            throw new Error(`Server responded with status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            statusMessageElement.innerHTML = `✅ Success: ${data.message}`;
+        } else {
+            statusMessageElement.innerHTML = `❌ Error from Server: ${data.message}`;
+        }
     })
     .catch(error => {
-        statusMessageElement.textContent = '❌ Error: Could not connect to the server.';
+        // This is the most important part. It will display the browser's security error.
+        console.error('Error:', error);
+        statusMessageElement.textContent = '❌ A connection error occurred.';
         debugError.textContent = `Fetch Error: ${error.toString()}`;
     })
     .finally(() => {
+        // Disable buttons after an attempt
+        stockButton.style.display = 'none';
+        useButton.style.display = 'none';
+        machineSelection.classList.add('hidden');
         appState.isSubmitting = false;
     });
 }
