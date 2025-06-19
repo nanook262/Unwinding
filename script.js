@@ -1,6 +1,6 @@
 // --- Configuration ---
 // IMPORTANT: This should be your correct, deployed Web App URL.
-const SCRIPT_URL = "https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbxKE2ukx_7WLezPayj6wtQ-i5IIBy0jn0jynHaXHgOxv_5-xHpnfdIiYBm-qL67N1ZJLA/exec/exec/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKE2ukx_7WLezPayj6wtQ-i5IIBy0jn0jynHaXHgOxv_5-xHpnfdIiYBm-qL67N1ZJLA/exec"; 
 
 // --- DOM Elements ---
 const statusMessageElement = document.getElementById('status-message').querySelector('p');
