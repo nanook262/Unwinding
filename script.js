@@ -1,6 +1,6 @@
 // --- Configuration ---
 // IMPORTANT: Paste the Web App URL you copied when you deployed your Google Apps Script.
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwWE91XWqzFK_0Ug-aN0BEHsp7W-7A0r_OOKrNQjjhGsJTJkW1riWlknSQ5SYMgc_Dsgw/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKE2ukx_7WLezPayj6wtQ-i5IIBy0jn0jynHaXHgOxv_5-xHpnfdIiYBm-qL67N1ZJLA/exec"; 
 
 // --- DOM Elements ---
 const statusMessage = document.getElementById('status-message');
