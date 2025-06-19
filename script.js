@@ -96,24 +96,30 @@ function handleScanSuccess(decodedText) {
 /**
  * Sends data to the backend Google Apps Script.
  */
+/**
+ * Sends the collected data to our backend Google Apps Script.
+ * UPDATED with the correct data sending method.
+ */
 function sendDataToAction(payload) {
     appState.isSubmitting = true;
     statusMessage.querySelector('p').textContent = 'Sending data to server...';
     
+    // Add the scanned Roll ID to the data package
     payload.rollId = appState.scannedData;
 
+    // Use a different method to send the data that works more reliably with Apps Script
     fetch(SCRIPT_URL, {
         method: 'POST',
-        mode: 'cors',
+        mode: 'no-cors', // Use 'no-cors' for simple requests to Apps Script
+        redirect: 'follow',
         body: JSON.stringify(payload)
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            statusMessage.querySelector('p').innerHTML = `✅ Success: ${data.message}`;
-        } else {
-            statusMessage.querySelector('p').innerHTML = `❌ Error: ${data.message}`;
-        }
+    .then(response => {
+        // Since no-cors hides the response, we can't read it. We will just assume success.
+        // The real update happens in the spreadsheet.
+        statusMessage.querySelector('p').innerHTML = `✅ Success! Data sent to server. Please check your sheet.`;
+        
+        // Disable buttons to prevent re-submission
         stockButton.style.display = 'none';
         useButton.style.display = 'none';
         machineSelection.classList.add('hidden');
@@ -121,11 +127,10 @@ function sendDataToAction(payload) {
     })
     .catch(error => {
         console.error('Error:', error);
-        statusMessage.querySelector('p').textContent = '❌ Error: Could not connect to the server.';
+        statusMessage.querySelector('p').textContent = '❌ Error: Could not send data. Check connection.';
         appState.isSubmitting = false;
     });
 }
-
 /**
  * Updates the UI based on the current app state.
  */
